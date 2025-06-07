@@ -1,0 +1,29 @@
+name: CI for MLOps Churn Prediction
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install fastapi uvicorn pytest
+      - name: Run feature engineering
+        run: python src/features/feature_engineering.py
+      - name: Train model
+        run: python src/models/train_model.py
+      - name: Run tests
+        run: pytest tests/
